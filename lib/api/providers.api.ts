@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 import { API_ENDPOINTS } from "@/constants/api.constants";
-import type { ProviderFlags } from "@/types/config.types";
+import type { ProviderFlags, ProvidersResponse, Provider } from "@/types/config.types";
 
 export const providersApi = {
   getFlags: (): Promise<ProviderFlags> =>
@@ -8,4 +8,13 @@ export const providersApi = {
 
   updateFlags: (data: Partial<ProviderFlags>): Promise<ProviderFlags> =>
     apiClient.patch<ProviderFlags>(API_ENDPOINTS.PROVIDERS.UPDATE_FLAGS, data),
+
+  getProviders: (): Promise<ProvidersResponse> =>
+    apiClient.get<ProvidersResponse>(API_ENDPOINTS.PROVIDERS.LIST),
+
+  updateProviderFlags: (
+    provider: "telna" | "transatel",
+    data: { catalog?: boolean; purchase?: boolean; statusSync?: boolean }
+  ): Promise<ProvidersResponse> =>
+    apiClient.patch<ProvidersResponse>(API_ENDPOINTS.PROVIDERS.UPDATE_PROVIDER_FLAGS(provider), data),
 };

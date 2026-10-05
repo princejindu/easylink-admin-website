@@ -3,19 +3,19 @@
 import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
-import { ProviderToggle } from "@/components/providers/provider-toggle";
+import { ProviderFlagsList } from "@/components/providers/provider-flags-list";
 import { providersApi } from "@/lib/api/providers.api";
 import { showError } from "@/lib/utils/toast.util";
-import type { ProviderFlags } from "@/types/config.types";
+import type { ProvidersResponse } from "@/types/config.types";
 
 export default function ProvidersPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [flags, setFlags] = useState<ProviderFlags | null>(null);
+  const [providersData, setProvidersData] = useState<ProvidersResponse | null>(null);
 
-  const fetchFlags = async () => {
+  const fetchProviders = async () => {
     try {
-      const data = await providersApi.getFlags();
-      setFlags(data);
+      const data = await providersApi.getProviders();
+      setProvidersData(data);
     } catch {
       showError("Failed to load provider flags");
     } finally {
@@ -24,7 +24,7 @@ export default function ProvidersPage() {
   };
 
   useEffect(() => {
-    fetchFlags();
+    fetchProviders();
   }, []);
 
   if (isLoading) {
@@ -39,11 +39,11 @@ export default function ProvidersPage() {
     <div className="space-y-6">
       <PageHeader
         title="Providers"
-        description="Switch the active eSIM provider and manage feature flags"
+        description="Manage provider feature flags (catalog, purchase, status sync)"
       />
 
-      {flags ? (
-        <ProviderToggle flags={flags} onSaved={setFlags} />
+      {providersData ? (
+        <ProviderFlagsList providersData={providersData} onSaved={setProvidersData} />
       ) : (
         <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">
           Unable to load provider flags. Refresh the page to try again.
