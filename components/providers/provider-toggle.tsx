@@ -72,11 +72,11 @@ export function ProviderToggle({ flags, onSaved }: ProviderToggleProps) {
         </div>
       </div>
 
-      {Object.keys(localFlags.flags).length > 0 && (
+      {localFlags.flags && Object.keys(localFlags.flags).length > 0 && (
         <div className="bg-card border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Feature Flags</h2>
           <div className="space-y-3">
-            {Object.entries(localFlags.flags).map(([key, value]) => (
+            {(localFlags.flags ? Object.entries(localFlags.flags) : []).map(([key, value]) => (
               <div
                 key={key}
                 className="flex items-center justify-between py-2 border-b last:border-0"
