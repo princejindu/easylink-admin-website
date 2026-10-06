@@ -37,4 +37,10 @@ export const API_ENDPOINTS = {
   ANALYTICS: {
     OVERVIEW: `${BASE}/analytics/overview`,
   },
+  PURCHASES: {
+    LIST: `${BASE}/purchases`,
+    DETAIL: (id: string) => `${BASE}/purchases/${id}`,
+    SYNC: (id: string) => `${BASE}/purchases/${id}/sync`,
+    CANCEL: (id: string) => `${BASE}/purchases/${id}/cancel`,
+  },
 } as const;

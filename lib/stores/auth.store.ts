@@ -33,11 +33,7 @@ function isValidAdmin(admin: unknown): admin is Admin {
   return (
     typeof a.id === "string" &&
     typeof a.email === "string" &&
-    typeof a.fullName === "string" &&
-    typeof a.status === "string" &&
-    ["active", "inactive", "suspended"].includes(
-      (a.status as string).toLowerCase()
-    )
+    typeof a.fullName === "string"
   );
 }
 

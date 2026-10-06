@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   Users,
   ShoppingCart,
+  CreditCard,
   Wifi,
   Bell,
   Settings,
@@ -39,6 +40,11 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
         label: "Orders",
         href: ROUTES.ORDERS,
         icon: ShoppingCart,
+      },
+      {
+        label: "Purchases",
+        href: ROUTES.PURCHASES,
+        icon: CreditCard,
       },
       {
         label: "eSIM Packages",
