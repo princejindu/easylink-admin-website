@@ -7,6 +7,7 @@ import {
   Bell,
   Settings,
   Server,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 import { ROUTES } from "./routes.constants";
@@ -30,6 +31,11 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
         label: "Dashboard",
         href: ROUTES.DASHBOARD,
         icon: LayoutDashboard,
+      },
+      {
+        label: "Analytics",
+        href: ROUTES.ANALYTICS,
+        icon: BarChart3,
       },
       {
         label: "Users",

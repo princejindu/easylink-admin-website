@@ -33,9 +33,13 @@ export const API_ENDPOINTS = {
   PROVIDERS: {
     FLAGS: `${BASE}/providers/flags`,
     UPDATE_FLAGS: `${BASE}/providers/flags`,
+    LIST: `${BASE}/providers`,
+    UPDATE_PROVIDER_FLAGS: (provider: string) => `${BASE}/providers/${provider}/flags`,
   },
   ANALYTICS: {
     OVERVIEW: `${BASE}/analytics/overview`,
+    TOP_PACKAGES: `${BASE}/analytics/top-packages`,
+    PURCHASES_BY_COUNTRY: `${BASE}/analytics/purchases-by-country`,
   },
   PURCHASES: {
     LIST: `${BASE}/purchases`,

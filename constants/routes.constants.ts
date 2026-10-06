@@ -12,4 +12,5 @@ export const ROUTES = {
   NOTIFICATIONS: "/dashboard/notifications",
   CONFIG: "/dashboard/config",
   PROVIDERS: "/dashboard/providers",
+  ANALYTICS: "/dashboard/analytics",
 } as const;

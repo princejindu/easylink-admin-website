@@ -1,4 +1,45 @@
 export interface AnalyticsOverview {
+  users: {
+    total: number;
+    newToday: number;
+    newThisWeek: number;
+    newThisMonth: number;
+  };
+  purchases: {
+    today: number;
+    thisWeek: number;
+    thisMonth: number;
+  };
+  revenue: {
+    today: number;
+    thisWeek: number;
+    thisMonth: number;
+    currency: string;
+  };
+}
+
+export interface TopPackage {
+  packageId: string;
+  packageName: string;
+  purchaseCount: number;
+  revenue: number;
+}
+
+export interface TopPackagesResponse {
+  packages: TopPackage[];
+}
+
+export interface PurchaseByCountry {
+  countryCode: string;
+  countryName: string;
+  purchaseCount: number;
+}
+
+export interface PurchasesByCountryResponse {
+  countries: PurchaseByCountry[];
+}
+
+export interface LegacyAnalyticsOverview {
   totalUsers: number;
   purchasesToday: number;
   purchasesThisWeek: number;
@@ -6,19 +47,15 @@ export interface AnalyticsOverview {
   revenueToday: number;
   revenueThisWeek: number;
   revenueThisMonth: number;
-  topPackages: TopPackage[];
-  purchasesByCountry: PurchasesByCountry[];
-}
-
-export interface TopPackage {
-  packageId: string;
-  packageName: string;
-  count: number;
-  revenue: number;
-}
-
-export interface PurchasesByCountry {
-  country: string;
-  count: number;
-  revenue: number;
+  topPackages: Array<{
+    packageId: string;
+    packageName: string;
+    count: number;
+    revenue: number;
+  }>;
+  purchasesByCountry: Array<{
+    country: string;
+    count: number;
+    revenue: number;
+  }>;
 }

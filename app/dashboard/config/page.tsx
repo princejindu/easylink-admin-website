@@ -3,19 +3,30 @@
 import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
-import { ConfigForm } from "@/components/config/config-form";
-import { configApi } from "@/lib/api/config.api";
+import { EsimPricingForm } from "@/components/config/esim-pricing-form";
+import { FeaturedPackagesManager } from "@/components/config/featured-packages-manager";
+import { PopularPackagesManager } from "@/components/config/popular-packages-manager";
+import { CacheManager } from "@/components/config/cache-manager";
+import { esimConfigApi } from "@/lib/api/esim-config.api";
 import { showError } from "@/lib/utils/toast.util";
-import type { SystemConfig } from "@/types/config.types";
+import type { EsimPricingConfig, FeaturedPackages, PopularPackages } from "@/types/config.types";
 
 export default function ConfigPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [config, setConfig] = useState<SystemConfig | null>(null);
+  const [pricing, setPricing] = useState<EsimPricingConfig | null>(null);
+  const [featured, setFeatured] = useState<FeaturedPackages | null>(null);
+  const [popular, setPopular] = useState<PopularPackages | null>(null);
 
-  const fetchConfig = async () => {
+  const fetchData = async () => {
     try {
-      const data = await configApi.get();
-      setConfig(data);
+      const [pricingData, featuredData, popularData] = await Promise.all([
+        esimConfigApi.getPricing(),
+        esimConfigApi.getFeaturedPackages(),
+        esimConfigApi.getPopularPackages(),
+      ]);
+      setPricing(pricingData);
+      setFeatured(featuredData);
+      setPopular(popularData);
     } catch {
       showError("Failed to load system configuration");
     } finally {
@@ -24,7 +35,7 @@ export default function ConfigPage() {
   };
 
   useEffect(() => {
-    fetchConfig();
+    fetchData();
   }, []);
 
   if (isLoading) {
@@ -39,16 +50,22 @@ export default function ConfigPage() {
     <div className="space-y-6">
       <PageHeader
         title="System Config"
-        description="Configure pricing, discounts, referral commissions, and featured packages"
+        description="Configure eSIM pricing, featured packages, and popular packages"
       />
 
-      {config ? (
-        <ConfigForm config={config} onSaved={setConfig} />
-      ) : (
-        <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">
-          Unable to load configuration. Refresh the page to try again.
-        </div>
+      {pricing && (
+        <EsimPricingForm pricing={pricing} onSaved={setPricing} />
       )}
+
+      {featured && (
+        <FeaturedPackagesManager featured={featured} onSaved={setFeatured} />
+      )}
+
+      {popular && (
+        <PopularPackagesManager popular={popular} onSaved={setPopular} />
+      )}
+
+      <CacheManager />
     </div>
   );
 }

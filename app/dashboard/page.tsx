@@ -8,17 +8,25 @@ import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { analyticsApi } from "@/lib/api/analytics.api";
 import { showError } from "@/lib/utils/toast.util";
 import { formatCurrency, formatNumber } from "@/lib/utils/format.util";
-import type { AnalyticsOverview } from "@/types/analytics.types";
+import type { AnalyticsOverview, TopPackage, PurchaseByCountry } from "@/types/analytics.types";
 
 export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [topPackages, setTopPackages] = useState<TopPackage[]>([]);
+  const [purchasesByCountry, setPurchasesByCountry] = useState<PurchaseByCountry[]>([]);
 
   useEffect(() => {
-    const fetchOverview = async () => {
+    const fetchAll = async () => {
       try {
-        const data = await analyticsApi.overview();
-        setOverview(data);
+        const [overviewData, packagesData, countriesData] = await Promise.all([
+          analyticsApi.overview(),
+          analyticsApi.topPackages(10),
+          analyticsApi.purchasesByCountry(),
+        ]);
+        setOverview(overviewData);
+        setTopPackages(packagesData.packages);
+        setPurchasesByCountry(countriesData.countries);
       } catch {
         showError("Failed to load dashboard data");
       } finally {
@@ -26,7 +34,7 @@ export default function DashboardPage() {
       }
     };
 
-    fetchOverview();
+    fetchAll();
   }, []);
 
   if (isLoading) {
@@ -47,22 +55,22 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Total Users"
-          value={formatNumber(overview?.totalUsers ?? 0)}
+          value={formatNumber(overview?.users?.total ?? 0)}
           icon={Users}
         />
         <StatsCard
           title="Purchases Today"
-          value={formatNumber(overview?.purchasesToday ?? 0)}
+          value={formatNumber(overview?.purchases?.today ?? 0)}
           icon={ShoppingCart}
         />
         <StatsCard
           title="Purchases This Month"
-          value={formatNumber(overview?.purchasesThisMonth ?? 0)}
+          value={formatNumber(overview?.purchases?.thisMonth ?? 0)}
           icon={TrendingUp}
         />
         <StatsCard
           title="Revenue This Month"
-          value={formatCurrency(overview?.revenueThisMonth ?? 0)}
+          value={formatCurrency(overview?.revenue?.thisMonth ?? 0)}
           icon={DollarSign}
         />
       </div>
@@ -70,11 +78,11 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Top Packages</h2>
-          {!overview?.topPackages?.length ? (
+          {topPackages.length === 0 ? (
             <p className="text-sm text-muted-foreground">No data available.</p>
           ) : (
             <div className="space-y-3">
-              {overview.topPackages.map((pkg, index) => (
+              {topPackages.map((pkg, index) => (
                 <div
                   key={pkg.packageId}
                   className="flex items-center justify-between py-2 border-b last:border-0"
@@ -86,7 +94,7 @@ export default function DashboardPage() {
                     <span className="text-sm font-medium">{pkg.packageName}</span>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold">{formatNumber(pkg.count)} sales</p>
+                    <p className="text-sm font-semibold">{formatNumber(pkg.purchaseCount)} sales</p>
                     <p className="text-xs text-muted-foreground">
                       {formatCurrency(pkg.revenue)}
                     </p>
@@ -99,22 +107,17 @@ export default function DashboardPage() {
 
         <div className="bg-card border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Purchases by Country</h2>
-          {!overview?.purchasesByCountry?.length ? (
+          {purchasesByCountry.length === 0 ? (
             <p className="text-sm text-muted-foreground">No data available.</p>
           ) : (
             <div className="space-y-3">
-              {overview.purchasesByCountry.slice(0, 8).map((item) => (
+              {purchasesByCountry.slice(0, 8).map((item) => (
                 <div
-                  key={item.country}
+                  key={item.countryCode}
                   className="flex items-center justify-between py-2 border-b last:border-0"
                 >
-                  <span className="text-sm font-medium">{item.country}</span>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold">{formatNumber(item.count)}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatCurrency(item.revenue)}
-                    </p>
-                  </div>
+                  <span className="text-sm font-medium">{item.countryName}</span>
+                  <p className="text-sm font-semibold">{formatNumber(item.purchaseCount)}</p>
                 </div>
               ))}
             </div>
