@@ -8,37 +8,25 @@ import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { analyticsApi } from "@/lib/api/analytics.api";
 import { showError } from "@/lib/utils/toast.util";
 import { formatCurrency, formatNumber } from "@/lib/utils/format.util";
-import type { AnalyticsOverview } from "@/types/analytics.types";
+import type { AnalyticsOverview, TopPackage, PurchaseByCountry } from "@/types/analytics.types";
 
 export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [topPackages, setTopPackages] = useState<TopPackage[]>([]);
+  const [purchasesByCountry, setPurchasesByCountry] = useState<PurchaseByCountry[]>([]);
 
   useEffect(() => {
-    const fetchOverview = async () => {
+    const fetchAll = async () => {
       try {
-        const data = await analyticsApi.overview();
-        // Adapt if needed
-        if ((data as any).totalUsers !== undefined) {
-          (data as any).users = {
-            total: (data as any).totalUsers,
-            newToday: 0,
-            newThisWeek: 0,
-            newThisMonth: 0,
-          };
-          (data as any).purchases = {
-            today: (data as any).purchasesToday,
-            thisWeek: (data as any).purchasesThisWeek,
-            thisMonth: (data as any).purchasesThisMonth,
-          };
-          (data as any).revenue = {
-            today: (data as any).revenueToday,
-            thisWeek: (data as any).revenueThisWeek,
-            thisMonth: (data as any).revenueThisMonth,
-            currency: 'GBP',
-          };
-        }
-        setOverview(data);
+        const [overviewData, packagesData, countriesData] = await Promise.all([
+          analyticsApi.overview(),
+          analyticsApi.topPackages(10),
+          analyticsApi.purchasesByCountry(),
+        ]);
+        setOverview(overviewData);
+        setTopPackages(packagesData.packages);
+        setPurchasesByCountry(countriesData.countries);
       } catch {
         showError("Failed to load dashboard data");
       } finally {
@@ -46,7 +34,7 @@ export default function DashboardPage() {
       }
     };
 
-    fetchOverview();
+    fetchAll();
   }, []);
 
   if (isLoading) {
@@ -90,11 +78,11 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Top Packages</h2>
-          {!((overview as any)?.topPackages?.length) ? (
+          {topPackages.length === 0 ? (
             <p className="text-sm text-muted-foreground">No data available.</p>
           ) : (
             <div className="space-y-3">
-              {((overview as any).topPackages || []).map((pkg: any, index: number) => (
+              {topPackages.map((pkg, index) => (
                 <div
                   key={pkg.packageId}
                   className="flex items-center justify-between py-2 border-b last:border-0"
@@ -106,7 +94,7 @@ export default function DashboardPage() {
                     <span className="text-sm font-medium">{pkg.packageName}</span>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold">{formatNumber(pkg.purchaseCount ?? (pkg as any).count)} sales</p>
+                    <p className="text-sm font-semibold">{formatNumber(pkg.purchaseCount)} sales</p>
                     <p className="text-xs text-muted-foreground">
                       {formatCurrency(pkg.revenue)}
                     </p>
@@ -119,22 +107,17 @@ export default function DashboardPage() {
 
         <div className="bg-card border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Purchases by Country</h2>
-          {!((overview as any)?.purchasesByCountry?.length) ? (
+          {purchasesByCountry.length === 0 ? (
             <p className="text-sm text-muted-foreground">No data available.</p>
           ) : (
             <div className="space-y-3">
-              {((overview as any).purchasesByCountry || []).slice(0, 8).map((item: any) => (
+              {purchasesByCountry.slice(0, 8).map((item) => (
                 <div
-                  key={item.purchaseCount ?? item.countryName ?? item.purchaseCount ?? item.country}
+                  key={item.countryCode}
                   className="flex items-center justify-between py-2 border-b last:border-0"
                 >
-                  <span className="text-sm font-medium">{item.purchaseCount ?? item.countryName ?? item.purchaseCount ?? item.country}</span>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold">{formatNumber(item.purchaseCount ?? item.count)}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatCurrency(item.revenue)}
-                    </p>
-                  </div>
+                  <span className="text-sm font-medium">{item.countryName}</span>
+                  <p className="text-sm font-semibold">{formatNumber(item.purchaseCount)}</p>
                 </div>
               ))}
             </div>

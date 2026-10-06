@@ -80,7 +80,7 @@ export function PopularPackagesManager({ popular, onSaved }: PopularPackagesMana
       ) : (
         <div className="space-y-2">
           {packageIds.map((id, index) => (
-            <div key={index} className="flex items-center gap-2 p-3 border rounded-lg">
+            <div key={id} className="flex items-center gap-2 p-3 border rounded-lg">
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => handleMoveUp(index)}
