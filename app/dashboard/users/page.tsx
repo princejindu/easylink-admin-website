@@ -30,8 +30,8 @@ export default function UsersPage() {
         search: search || undefined,
         status: statusFilter || undefined,
       });
-      setUsers(response.users);
-      setTotal(response.total);
+      setUsers(response.data ?? []);
+      setTotal(response.meta?.total ?? 0);
     } catch {
       showError("Failed to load users");
     } finally {

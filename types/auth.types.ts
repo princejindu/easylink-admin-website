@@ -7,10 +7,10 @@ export interface Admin {
   email: string;
   fullName: string;
   role: AdminRole;
-  status: AdminStatus;
-  lastLogin: string | null;
-  createdAt: string;
-  updatedAt: string;
+  status?: AdminStatus;
+  lastLogin?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface LoginRequest {
