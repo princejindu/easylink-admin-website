@@ -4,6 +4,7 @@ import {
   ShoppingCart,
   Wifi,
   Bell,
+  Gift,
   Settings,
   Server,
   type LucideIcon,
@@ -54,6 +55,11 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
         label: "Notifications",
         href: ROUTES.NOTIFICATIONS,
         icon: Bell,
+      },
+      {
+        label: "Referrals",
+        href: ROUTES.REFERRALS,
+        icon: Gift,
       },
       {
         label: "System Config",

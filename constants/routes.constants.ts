@@ -8,6 +8,7 @@ export const ROUTES = {
   ORDER_DETAIL: (id: string) => `/dashboard/orders/${id}`,
   PACKAGES: "/dashboard/packages",
   NOTIFICATIONS: "/dashboard/notifications",
+  REFERRALS: "/dashboard/referrals",
   CONFIG: "/dashboard/config",
   PROVIDERS: "/dashboard/providers",
 } as const;

@@ -24,6 +24,11 @@ export const MESSAGES = {
     SEND_SUCCESS: "Broadcast notification sent",
     FETCH_ERROR: "Failed to load notification history",
   },
+  REFERRALS: {
+    RATE_SAVE_SUCCESS: "Commission rate updated",
+    MARK_PAID_SUCCESS: "Commission marked as paid",
+    FETCH_ERROR: "Failed to load referrals",
+  },
   CONFIG: {
     SAVE_SUCCESS: "System configuration saved",
     FETCH_ERROR: "Failed to load configuration",

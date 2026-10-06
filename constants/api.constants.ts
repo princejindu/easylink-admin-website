@@ -26,6 +26,12 @@ export const API_ENDPOINTS = {
     BROADCAST: `${BASE}/notifications/broadcast`,
     HISTORY: `${BASE}/notifications/history`,
   },
+  REFERRALS: {
+    COMMISSION_RATE: `${BASE}/referrals/commission-rate`,
+    COMMISSIONS: `${BASE}/referrals/commissions`,
+    MARK_PAID: (id: string) =>
+      `${BASE}/referrals/commissions/${id}/mark-paid`,
+  },
   CONFIG: {
     GET: `${BASE}/config`,
     UPDATE: `${BASE}/config`,

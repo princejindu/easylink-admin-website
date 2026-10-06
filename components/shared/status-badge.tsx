@@ -19,6 +19,11 @@ function getStatusConfig(status: string): { label: string; classes: string } {
         label: "Suspended",
         classes: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
       };
+    case "paid":
+      return {
+        label: "Paid",
+        classes: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      };
     case "pending":
       return {
         label: "Pending",
