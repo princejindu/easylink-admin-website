@@ -7,6 +7,14 @@ import type {
 } from "@/types/config.types";
 
 export const notificationsApi = {
+  preview: (
+    data: BroadcastNotificationRequest
+  ): Promise<{ recipientCount: number }> =>
+    apiClient.post<{ recipientCount: number }>(
+      API_ENDPOINTS.NOTIFICATIONS.PREVIEW,
+      data
+    ),
+
   broadcast: (
     data: BroadcastNotificationRequest
   ): Promise<BroadcastNotificationResponse> =>

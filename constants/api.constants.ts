@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
   NOTIFICATIONS: {
     BROADCAST: `${BASE}/notifications/broadcast`,
     HISTORY: `${BASE}/notifications/history`,
+    PREVIEW: `${BASE}/notifications/preview`,
   },
   REFERRALS: {
     COMMISSION_RATE: `${BASE}/referrals/commission-rate`,

@@ -67,14 +67,38 @@ export function ComposeForm({ onSent }: ComposeFormProps) {
     e.preventDefault();
     if (!canSubmit) return;
 
-    const confirmed = window.confirm(
-      `Send this notification?\n\nTitle: ${form.title}\nTarget: ${TARGET_LABELS[form.target]}${
-        form.target !== "all" ? ` (${filterSummary})` : ""
-      }\n\nThis cannot be undone.`
-    );
-    if (!confirmed) return;
-
     setIsLoading(true);
+    let recipientCount = 0;
+    try {
+      const preview = await notificationsApi.preview({
+        title: form.title.trim(),
+        body: form.body.trim(),
+        target: form.target,
+        filters,
+      });
+      recipientCount = preview.recipientCount;
+    } catch (error) {
+      showError(getErrorMessage(error, "Failed to preview recipient count"));
+      setIsLoading(false);
+      return;
+    }
+
+    if (recipientCount === 0) {
+      showError("0 users match this target. Adjust the filters before sending.");
+      setIsLoading(false);
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Send this notification?\n\nTitle: ${form.title.trim()}\nTarget: ${TARGET_LABELS[form.target]}${
+        form.target !== "all" ? ` (${filterSummary})` : ""
+      }\nRecipients: ${recipientCount}\n\nThis cannot be undone.`
+    );
+    if (!confirmed) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const result = await notificationsApi.broadcast({
         title: form.title.trim(),
