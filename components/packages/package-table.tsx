@@ -87,7 +87,7 @@ export function PackageTable({ packages, onRefresh }: PackageTableProps) {
                   &pound;{pkg.priceGbp.toFixed(2)}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell capitalize">
-                  {pkg.provider}
+                  {pkg.provider ?? "—"}
                 </td>
                 <td className="px-4 py-3">
                   {pkg.isFeatured ? (

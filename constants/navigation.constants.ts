@@ -5,6 +5,7 @@ import {
   CreditCard,
   Wifi,
   Bell,
+  Gift,
   Settings,
   Server,
   BarChart3,
@@ -66,6 +67,11 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
         label: "Notifications",
         href: ROUTES.NOTIFICATIONS,
         icon: Bell,
+      },
+      {
+        label: "Referrals",
+        href: ROUTES.REFERRALS,
+        icon: Gift,
       },
       {
         label: "System Config",

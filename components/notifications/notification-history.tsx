@@ -9,6 +9,12 @@ interface NotificationHistoryProps {
   isLoading: boolean;
 }
 
+const TARGET_LABELS: Record<string, string> = {
+  all: "All users",
+  country: "Country",
+  purchase_status: "Purchase status",
+};
+
 export function NotificationHistory({
   history,
   isLoading,
@@ -26,21 +32,63 @@ export function NotificationHistory({
           No notifications sent yet.
         </p>
       ) : (
-        <div className="space-y-3">
-          {history.map((notif) => (
-            <div key={notif.id} className="p-4 border rounded-lg space-y-1">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-medium">{notif.title}</p>
-                <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {formatDateTime(notif.sentAt)}
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">{notif.body}</p>
-              <p className="text-xs text-muted-foreground">
-                Sent to {notif.recipientCount} users
-              </p>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="text-left px-3 py-2 font-medium text-muted-foreground">
+                  Date sent
+                </th>
+                <th className="text-left px-3 py-2 font-medium text-muted-foreground">
+                  Title
+                </th>
+                <th className="text-left px-3 py-2 font-medium text-muted-foreground">
+                  Target
+                </th>
+                <th className="text-left px-3 py-2 font-medium text-muted-foreground">
+                  Recipients
+                </th>
+                <th className="text-left px-3 py-2 font-medium text-muted-foreground">
+                  Sent by
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((notif) => (
+                <tr
+                  key={notif.id}
+                  className="border-b last:border-0 hover:bg-accent/50 transition-colors"
+                >
+                  <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
+                    {formatDateTime(notif.sentAt)}
+                  </td>
+                  <td className="px-3 py-2 font-medium">
+                    <div>{notif.title}</div>
+                    <div className="text-xs text-muted-foreground line-clamp-1">
+                      {notif.body}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 text-muted-foreground">
+                    {TARGET_LABELS[notif.target] ?? notif.target}
+                    {notif.target !== "all" &&
+                      notif.filters &&
+                      Object.keys(notif.filters).length > 0 && (
+                        <span className="text-xs">
+                          {" "}
+                          ({Object.values(notif.filters).join(", ")})
+                        </span>
+                      )}
+                  </td>
+                  <td className="px-3 py-2 text-muted-foreground">
+                    {notif.recipientCount}
+                  </td>
+                  <td className="px-3 py-2 text-muted-foreground">
+                    {notif.sentBy ?? "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

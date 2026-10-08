@@ -11,7 +11,10 @@ export const analyticsApi = {
     apiClient.get<AnalyticsOverview>(API_ENDPOINTS.ANALYTICS.OVERVIEW),
 
   topPackages: (limit = 10): Promise<TopPackagesResponse> =>
-    apiClient.get<TopPackagesResponse>(`${API_ENDPOINTS.ANALYTICS.TOP_PACKAGES}?limit=${limit}`),
+    apiClient.get<TopPackagesResponse>(
+      API_ENDPOINTS.ANALYTICS.TOP_PACKAGES,
+      { limit } as Record<string, unknown>
+    ),
 
   purchasesByCountry: (): Promise<PurchasesByCountryResponse> =>
     apiClient.get<PurchasesByCountryResponse>(API_ENDPOINTS.ANALYTICS.PURCHASES_BY_COUNTRY),

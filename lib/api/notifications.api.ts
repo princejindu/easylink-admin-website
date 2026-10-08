@@ -1,15 +1,24 @@
 import { apiClient } from "./client";
 import { API_ENDPOINTS } from "@/constants/api.constants";
 import type {
-  NotificationHistory,
   BroadcastNotificationRequest,
+  BroadcastNotificationResponse,
+  NotificationHistoryResponse,
 } from "@/types/config.types";
 
 export const notificationsApi = {
+  preview: (
+    data: BroadcastNotificationRequest
+  ): Promise<{ recipientCount: number }> =>
+    apiClient.post<{ recipientCount: number }>(
+      API_ENDPOINTS.NOTIFICATIONS.PREVIEW,
+      data
+    ),
+
   broadcast: (
     data: BroadcastNotificationRequest
-  ): Promise<{ message: string }> =>
-    apiClient.post<{ message: string }>(
+  ): Promise<BroadcastNotificationResponse> =>
+    apiClient.post<BroadcastNotificationResponse>(
       API_ENDPOINTS.NOTIFICATIONS.BROADCAST,
       data
     ),
@@ -17,8 +26,8 @@ export const notificationsApi = {
   history: (params?: {
     page?: number;
     limit?: number;
-  }): Promise<{ notifications: NotificationHistory[]; total: number }> =>
-    apiClient.get<{ notifications: NotificationHistory[]; total: number }>(
+  }): Promise<NotificationHistoryResponse> =>
+    apiClient.get<NotificationHistoryResponse>(
       API_ENDPOINTS.NOTIFICATIONS.HISTORY,
       params as Record<string, unknown>
     ),

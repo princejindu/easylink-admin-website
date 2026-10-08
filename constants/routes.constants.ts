@@ -10,6 +10,7 @@ export const ROUTES = {
   PURCHASE_DETAIL: (id: string) => `/dashboard/purchases/${id}`,
   PACKAGES: "/dashboard/packages",
   NOTIFICATIONS: "/dashboard/notifications",
+  REFERRALS: "/dashboard/referrals",
   CONFIG: "/dashboard/config",
   PROVIDERS: "/dashboard/providers",
   ANALYTICS: "/dashboard/analytics",

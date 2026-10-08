@@ -25,8 +25,8 @@ export default function DashboardPage() {
           analyticsApi.purchasesByCountry(),
         ]);
         setOverview(overviewData);
-        setTopPackages(packagesData.packages);
-        setPurchasesByCountry(countriesData.countries);
+        setTopPackages(packagesData.packages ?? []);
+        setPurchasesByCountry(countriesData.countries ?? []);
       } catch {
         showError("Failed to load dashboard data");
       } finally {
@@ -116,8 +116,10 @@ export default function DashboardPage() {
                   key={item.countryCode}
                   className="flex items-center justify-between py-2 border-b last:border-0"
                 >
-                  <span className="text-sm font-medium">{item.countryName}</span>
-                  <p className="text-sm font-semibold">{formatNumber(item.purchaseCount)}</p>
+                  <span className="text-sm font-medium">{item.countryName || item.countryCode}</span>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold">{formatNumber(item.purchaseCount)}</p>
+                  </div>
                 </div>
               ))}
             </div>

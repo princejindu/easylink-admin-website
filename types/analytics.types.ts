@@ -35,6 +35,9 @@ export interface PurchaseByCountry {
   purchaseCount: number;
 }
 
+// Alias kept for backward compatibility
+export type PurchasesByCountry = PurchaseByCountry;
+
 export interface PurchasesByCountryResponse {
   countries: PurchaseByCountry[];
 }
