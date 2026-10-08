@@ -1,24 +1,32 @@
 export interface AnalyticsOverview {
-  totalUsers: number;
-  purchasesToday: number;
-  purchasesThisWeek: number;
-  purchasesThisMonth: number;
-  revenueToday: number;
-  revenueThisWeek: number;
-  revenueThisMonth: number;
-  topPackages: TopPackage[];
-  purchasesByCountry: PurchasesByCountry[];
+  users: {
+    total: number;
+    newToday: number;
+    newThisWeek: number;
+    newThisMonth: number;
+  };
+  purchases: {
+    today: number;
+    thisWeek: number;
+    thisMonth: number;
+  };
+  revenue: {
+    today: number;
+    thisWeek: number;
+    thisMonth: number;
+    currency: string;
+  };
 }
 
 export interface TopPackage {
   packageId: string;
   packageName: string;
-  count: number;
+  purchaseCount: number;
   revenue: number;
 }
 
 export interface PurchasesByCountry {
-  country: string;
-  count: number;
-  revenue: number;
+  countryCode: string;
+  countryName: string;
+  purchaseCount: number;
 }

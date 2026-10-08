@@ -12,8 +12,15 @@ export interface RegionPricingOverride {
 }
 
 export interface ProviderFlags {
-  activeProvider: "transatel" | "telna";
-  flags: Record<string, boolean>;
+  providers: Array<{
+    name: "telna" | "transatel";
+    displayName: string;
+    flags: {
+      catalog: boolean;
+      purchase: boolean;
+      statusSync: boolean;
+    };
+  }>;
 }
 
 export type BroadcastTarget = "all" | "country" | "purchase_status";

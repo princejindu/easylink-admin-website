@@ -7,7 +7,7 @@ export interface EsimPackage {
   validityDays: number;
   priceGbp: number;
   countries: string[];
-  provider: EsimProvider;
+  provider?: EsimProvider;
   isFeatured: boolean;
 }
 

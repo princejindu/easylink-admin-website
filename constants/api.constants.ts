@@ -12,15 +12,15 @@ export const API_ENDPOINTS = {
     ACTIVATE: (id: string) => `${BASE}/users/${id}/activate`,
   },
   ORDERS: {
-    LIST: `${BASE}/orders`,
-    DETAIL: (id: string) => `${BASE}/orders/${id}`,
-    RESYNC: (id: string) => `${BASE}/orders/${id}/resync`,
-    CANCEL: (id: string) => `${BASE}/orders/${id}`,
+    LIST: `${BASE}/purchases`,
+    DETAIL: (id: string) => `${BASE}/purchases/${id}`,
+    RESYNC: (id: string) => `${BASE}/purchases/${id}/sync`,
+    CANCEL: (id: string) => `${BASE}/purchases/${id}/cancel`,
   },
   PACKAGES: {
-    LIST: `${BASE}/packages`,
-    FEATURE: (id: string) => `${BASE}/packages/${id}/feature`,
-    UNFEATURE: (id: string) => `${BASE}/packages/${id}/unfeature`,
+    LIST: `/esim/packages`,
+    FEATURE: (id: string) => `${BASE}/esim/featured-packages`,
+    UNFEATURE: (id: string) => `${BASE}/esim/featured-packages`,
   },
   NOTIFICATIONS: {
     BROADCAST: `${BASE}/notifications/broadcast`,
@@ -34,14 +34,17 @@ export const API_ENDPOINTS = {
       `${BASE}/referrals/commissions/${id}/mark-paid`,
   },
   CONFIG: {
-    GET: `${BASE}/config`,
-    UPDATE: `${BASE}/config`,
+    GET: `${BASE}/esim/pricing`,
+    UPDATE: `${BASE}/esim/config`,
   },
   PROVIDERS: {
-    FLAGS: `${BASE}/providers/flags`,
-    UPDATE_FLAGS: `${BASE}/providers/flags`,
+    FLAGS: `${BASE}/providers`,
+    UPDATE_FLAGS: (provider: string) => `${BASE}/providers/${provider}/flags`,
   },
   ANALYTICS: {
     OVERVIEW: `${BASE}/analytics/overview`,
+    TOP_PACKAGES: `${BASE}/analytics/top-packages`,
+    PURCHASES_BY_COUNTRY: `${BASE}/analytics/purchases-by-country`,
   },
+  FEATURED_PACKAGES: `${BASE}/esim/featured-packages`,
 } as const;

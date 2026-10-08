@@ -31,7 +31,7 @@ export default function ReferralsPage() {
       });
       if (requestId !== commissionsRequestId.current) return;
       if (!response) return;
-      const list = response.items ?? [];
+      const list = response.data ?? [];
       setCommissions(list);
       setTotal(response.meta?.total ?? list.length);
     } catch (error) {

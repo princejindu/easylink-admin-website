@@ -11,6 +11,7 @@ export interface User {
   country?: string;
   referralCode?: string;
   totalSpend?: number;
+  purchaseCount?: number;
   referralBalance?: number;
   createdAt: string;
   updatedAt: string;

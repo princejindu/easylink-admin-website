@@ -21,7 +21,7 @@ export interface CommissionsMeta {
 }
 
 export interface CommissionsListResponse {
-  items: Commission[];
+  data: Commission[];
   meta: CommissionsMeta;
 }
 

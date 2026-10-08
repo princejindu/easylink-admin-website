@@ -1,6 +1,7 @@
 import { apiClient } from "./client";
 import { API_ENDPOINTS } from "@/constants/api.constants";
 import type {
+  Commission,
   CommissionRateResponse,
   CommissionsListParams,
   CommissionsListResponse,
@@ -20,13 +21,20 @@ export const referralsApi = {
       { commissionPercent }
     ),
 
-  listCommissions: (
+  listCommissions: async (
     params?: CommissionsListParams
-  ): Promise<CommissionsListResponse> =>
-    apiClient.get<CommissionsListResponse>(
-      API_ENDPOINTS.REFERRALS.COMMISSIONS,
-      params as Record<string, unknown>
-    ),
+  ): Promise<CommissionsListResponse> => {
+    const response = await apiClient.get<{
+      items?: Commission[];
+      data?: Commission[];
+      meta: CommissionsListResponse["meta"];
+    }>(API_ENDPOINTS.REFERRALS.COMMISSIONS, params as Record<string, unknown>);
+
+    return {
+      data: response?.data ?? response?.items ?? [],
+      meta: response?.meta,
+    };
+  },
 
   markPaid: (id: string): Promise<{ message: string }> =>
     apiClient.patch<{ message: string }>(

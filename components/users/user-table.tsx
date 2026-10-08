@@ -37,6 +37,12 @@ export function UserTable({ users }: UserTableProps) {
                 Status
               </th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
+                Total Spend
+              </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
+                Purchases
+              </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
                 Joined
               </th>
             </tr>
@@ -58,6 +64,12 @@ export function UserTable({ users }: UserTableProps) {
                 </td>
                 <td className="px-4 py-3">
                   <StatusBadge status={user.status} />
+                </td>
+                <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
+                  {user.totalSpend != null ? `£${user.totalSpend.toFixed(2)}` : "£0.00"}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
+                  {user.purchaseCount ?? 0}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
                   {formatDate(user.createdAt)}
