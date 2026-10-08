@@ -40,11 +40,19 @@ export const API_ENDPOINTS = {
   PROVIDERS: {
     FLAGS: `${BASE}/providers`,
     UPDATE_FLAGS: (provider: string) => `${BASE}/providers/${provider}/flags`,
+    LIST: `${BASE}/providers`,
+    UPDATE_PROVIDER_FLAGS: (provider: string) => `${BASE}/providers/${provider}/flags`,
   },
   ANALYTICS: {
     OVERVIEW: `${BASE}/analytics/overview`,
     TOP_PACKAGES: `${BASE}/analytics/top-packages`,
     PURCHASES_BY_COUNTRY: `${BASE}/analytics/purchases-by-country`,
+  },
+  PURCHASES: {
+    LIST: `${BASE}/purchases`,
+    DETAIL: (id: string) => `${BASE}/purchases/${id}`,
+    SYNC: (id: string) => `${BASE}/purchases/${id}/sync`,
+    CANCEL: (id: string) => `${BASE}/purchases/${id}/cancel`,
   },
   FEATURED_PACKAGES: `${BASE}/esim/featured-packages`,
 } as const;

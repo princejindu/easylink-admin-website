@@ -25,8 +25,40 @@ export interface TopPackage {
   revenue: number;
 }
 
-export interface PurchasesByCountry {
+export interface TopPackagesResponse {
+  packages: TopPackage[];
+}
+
+export interface PurchaseByCountry {
   countryCode: string;
   countryName: string;
   purchaseCount: number;
+}
+
+// Alias kept for backward compatibility
+export type PurchasesByCountry = PurchaseByCountry;
+
+export interface PurchasesByCountryResponse {
+  countries: PurchaseByCountry[];
+}
+
+export interface LegacyAnalyticsOverview {
+  totalUsers: number;
+  purchasesToday: number;
+  purchasesThisWeek: number;
+  purchasesThisMonth: number;
+  revenueToday: number;
+  revenueThisWeek: number;
+  revenueThisMonth: number;
+  topPackages: Array<{
+    packageId: string;
+    packageName: string;
+    count: number;
+    revenue: number;
+  }>;
+  purchasesByCountry: Array<{
+    country: string;
+    count: number;
+    revenue: number;
+  }>;
 }

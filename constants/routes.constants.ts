@@ -6,9 +6,12 @@ export const ROUTES = {
   USER_DETAIL: (id: string) => `/dashboard/users/${id}`,
   ORDERS: "/dashboard/orders",
   ORDER_DETAIL: (id: string) => `/dashboard/orders/${id}`,
+  PURCHASES: "/dashboard/purchases",
+  PURCHASE_DETAIL: (id: string) => `/dashboard/purchases/${id}`,
   PACKAGES: "/dashboard/packages",
   NOTIFICATIONS: "/dashboard/notifications",
   REFERRALS: "/dashboard/referrals",
   CONFIG: "/dashboard/config",
   PROVIDERS: "/dashboard/providers",
+  ANALYTICS: "/dashboard/analytics",
 } as const;

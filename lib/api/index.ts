@@ -8,3 +8,4 @@ export { referralsApi } from "./referrals.api";
 export { configApi } from "./config.api";
 export { providersApi } from "./providers.api";
 export { analyticsApi } from "./analytics.api";
+export { purchasesApi } from "./purchases.api";

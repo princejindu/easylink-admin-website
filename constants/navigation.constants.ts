@@ -2,11 +2,13 @@ import {
   LayoutDashboard,
   Users,
   ShoppingCart,
+  CreditCard,
   Wifi,
   Bell,
   Gift,
   Settings,
   Server,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 import { ROUTES } from "./routes.constants";
@@ -32,6 +34,11 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
         icon: LayoutDashboard,
       },
       {
+        label: "Analytics",
+        href: ROUTES.ANALYTICS,
+        icon: BarChart3,
+      },
+      {
         label: "Users",
         href: ROUTES.USERS,
         icon: Users,
@@ -40,6 +47,11 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
         label: "Orders",
         href: ROUTES.ORDERS,
         icon: ShoppingCart,
+      },
+      {
+        label: "Purchases",
+        href: ROUTES.PURCHASES,
+        icon: CreditCard,
       },
       {
         label: "eSIM Packages",
