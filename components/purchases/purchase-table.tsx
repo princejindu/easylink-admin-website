@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { DisputedBadge } from "@/components/purchases/disputed-badge";
+import { isDisputed } from "@/lib/utils/dispute.util";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { formatDateTime, formatCurrency } from "@/lib/utils/format.util";
 import { purchasesApi } from "@/lib/api/purchases.api";
@@ -100,7 +102,10 @@ export function PurchaseTable({ purchases, onRefresh }: PurchaseTableProps) {
                   {formatCurrency(purchase.amount, purchase.currency)}
                 </td>
                 <td className="px-4 py-3">
-                  <StatusBadge status={purchase.status} />
+                  <div className="flex flex-wrap items-center gap-1">
+                    <StatusBadge status={purchase.status} />
+                    {isDisputed(purchase) && <DisputedBadge />}
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground capitalize hidden md:table-cell">
                   {purchase.provider}

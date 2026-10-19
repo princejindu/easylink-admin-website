@@ -5,7 +5,22 @@ import type {
   CommissionRateResponse,
   CommissionsListParams,
   CommissionsListResponse,
+  PageParams,
+  PaginatedList,
+  ReferralWallet,
+  WalletTransaction,
 } from "@/types/referrals.types";
+
+type RawList<T> = {
+  items?: T[];
+  data?: T[];
+  meta?: PaginatedList<T>["meta"];
+} | null;
+
+const toPaginatedList = <T>(response: RawList<T>): PaginatedList<T> => ({
+  data: response?.data ?? response?.items ?? [],
+  meta: response?.meta,
+});
 
 export const referralsApi = {
   getCommissionRate: (): Promise<CommissionRateResponse> =>
@@ -36,8 +51,24 @@ export const referralsApi = {
     };
   },
 
-  markPaid: (id: string): Promise<{ message: string }> =>
-    apiClient.patch<{ message: string }>(
-      API_ENDPOINTS.REFERRALS.MARK_PAID(id)
+  listWallets: async (
+    params?: PageParams
+  ): Promise<PaginatedList<ReferralWallet>> =>
+    toPaginatedList(
+      await apiClient.get<RawList<ReferralWallet>>(
+        API_ENDPOINTS.REFERRALS.WALLETS,
+        params as Record<string, unknown>
+      )
+    ),
+
+  listWalletTransactions: async (
+    userId: string,
+    params?: PageParams
+  ): Promise<PaginatedList<WalletTransaction>> =>
+    toPaginatedList(
+      await apiClient.get<RawList<WalletTransaction>>(
+        API_ENDPOINTS.REFERRALS.WALLET_TRANSACTIONS(userId),
+        params as Record<string, unknown>
+      )
     ),
 };

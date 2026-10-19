@@ -30,8 +30,9 @@ export const API_ENDPOINTS = {
   REFERRALS: {
     COMMISSION_RATE: `${BASE}/referrals/commission-rate`,
     COMMISSIONS: `${BASE}/referrals/commissions`,
-    MARK_PAID: (id: string) =>
-      `${BASE}/referrals/commissions/${id}/mark-paid`,
+    WALLETS: `${BASE}/referrals/wallets`,
+    WALLET_TRANSACTIONS: (userId: string) =>
+      `${BASE}/referrals/wallets/${userId}/transactions`,
   },
   CONFIG: {
     GET: `${BASE}/esim/pricing`,

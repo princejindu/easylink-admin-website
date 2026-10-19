@@ -70,11 +70,18 @@ export default function UserDetailPage() {
     fetchUser();
   }, [fetchUser]);
 
+  const trimmedReason = suspendReason.trim();
+
   const handleSuspend = async () => {
     if (!user) return;
+    if (!trimmedReason) {
+      showError("Enter a reason for the suspension.");
+      return;
+    }
     setIsSubmitting(true);
     try {
-      const result = await usersApi.suspend(user.id, suspendReason || undefined);
+      const result = await usersApi.suspend(user.id, trimmedReason);
+      if (!result) return;
       setUser((prev) =>
         prev
           ? {
@@ -101,6 +108,7 @@ export default function UserDetailPage() {
     setIsSubmitting(true);
     try {
       const result = await usersApi.activate(user.id);
+      if (!result) return;
       setUser((prev) =>
         prev
           ? {
@@ -349,13 +357,15 @@ export default function UserDetailPage() {
             </p>
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="suspend-reason">
-                Reason (optional but recommended)
+                Reason (required)
               </label>
               <textarea
                 id="suspend-reason"
                 rows={3}
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
+                maxLength={500}
+                required
                 placeholder="e.g. Suspicious payment activity"
                 className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               />
@@ -373,7 +383,7 @@ export default function UserDetailPage() {
               </button>
               <button
                 onClick={handleSuspend}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !trimmedReason}
                 className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {isSubmitting && <LoadingSpinner size="sm" />}

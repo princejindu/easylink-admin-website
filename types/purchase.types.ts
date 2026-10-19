@@ -12,6 +12,16 @@ export interface Purchase {
   providerOrderId: string;
   createdAt: string;
   updatedAt: string;
+  /** Set by the API when the order is under a Stripe dispute (chargeback). */
+  disputed?: boolean;
+  dispute?: PurchaseDispute | null;
+}
+
+export interface PurchaseDispute {
+  id?: string;
+  status?: string;
+  reason?: string;
+  evidenceDueBy?: string | null;
 }
 
 export interface PurchaseDetail extends Purchase {
@@ -23,6 +33,10 @@ export interface PurchaseDetail extends Purchase {
   apn?: string;
   providerMetadata?: Record<string, unknown>;
   canCancel: boolean;
+  /** Evidence fields for disputes. */
+  paidAt?: string | null;
+  deliveredAt?: string | null;
+  activatedAt?: string | null;
 }
 
 export interface PurchasesListResponse {

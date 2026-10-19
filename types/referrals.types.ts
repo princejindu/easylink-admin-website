@@ -8,9 +8,12 @@ export interface Commission {
   purchaseAmount: number;
   commissionAmount: number;
   commissionPercent: number;
-  status: "pending" | "paid";
+  /** pending | available | cancelled (older API builds send paid or reversed). */
+  status: string;
   createdAt: string;
   paidAt: string | null;
+  /** When a pending commission releases to available (14 days after delivery). */
+  availableAt?: string | null;
 }
 
 export interface CommissionsMeta {
@@ -32,4 +35,37 @@ export interface CommissionsListParams {
 
 export interface CommissionRateResponse {
   commissionPercent: number;
+}
+
+export interface ReferralWallet {
+  userId: string;
+  name: string;
+  email: string;
+  availableBalance: number;
+  pendingBalance: number;
+  totalEarned: number;
+  totalSpent: number;
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  balanceAfter: number;
+  description: string | null;
+  reference: string | null;
+  /** PENDING | COMPLETED | CANCELLED */
+  status: string;
+  availableAt: string | null;
+  createdAt: string;
+}
+
+export interface PaginatedList<T> {
+  data: T[];
+  meta?: CommissionsMeta;
+}
+
+export interface PageParams {
+  page?: number;
+  limit?: number;
 }

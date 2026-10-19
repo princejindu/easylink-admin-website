@@ -26,7 +26,6 @@ export const MESSAGES = {
   },
   REFERRALS: {
     RATE_SAVE_SUCCESS: "Commission rate updated",
-    MARK_PAID_SUCCESS: "Commission marked as paid",
     FETCH_ERROR: "Failed to load referrals",
   },
   CONFIG: {

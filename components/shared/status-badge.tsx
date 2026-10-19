@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils/cn";
 
 interface StatusBadgeProps {
   status: string;
+  label?: string;
   className?: string;
 }
 
@@ -72,7 +73,7 @@ function getStatusConfig(status: string): { label: string; classes: string } {
   }
 }
 
-export function StatusBadge({ status, className }: StatusBadgeProps) {
+export function StatusBadge({ status, label, className }: StatusBadgeProps) {
   const config = getStatusConfig(status);
 
   return (
@@ -83,7 +84,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
         className
       )}
     >
-      {config.label}
+      {label ?? config.label}
     </span>
   );
 }

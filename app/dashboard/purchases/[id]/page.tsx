@@ -13,6 +13,9 @@ import {
 import { PageHeader } from "@/components/shared/page-header";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { DisputedBadge } from "@/components/purchases/disputed-badge";
+import { DisputeEvidenceCard } from "@/components/purchases/dispute-evidence-card";
+import { isDisputed } from "@/lib/utils/dispute.util";
 import { purchasesApi } from "@/lib/api/purchases.api";
 import { showSuccess, showError } from "@/lib/utils/toast.util";
 import { formatDateTime, formatCurrency } from "@/lib/utils/format.util";
@@ -209,7 +212,10 @@ export default function PurchaseDetailPage() {
 
           <div className="space-y-3 text-sm">
             <Row label="Status">
-              <StatusBadge status={purchase.status} />
+              <span className="inline-flex flex-wrap items-center justify-end gap-1">
+                <StatusBadge status={purchase.status} />
+                {isDisputed(purchase) && <DisputedBadge />}
+              </span>
             </Row>
             <Row label="Package">{purchase.packageName}</Row>
             <Row label="Package ID">
@@ -251,6 +257,8 @@ export default function PurchaseDetailPage() {
             </Row>
           </div>
         </div>
+
+        <DisputeEvidenceCard purchase={purchase} disputed={isDisputed(purchase)} />
 
         {/* Payment info */}
         <div className="bg-card border rounded-lg p-6 space-y-4">
