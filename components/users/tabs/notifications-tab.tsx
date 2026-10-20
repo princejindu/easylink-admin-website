@@ -22,12 +22,17 @@ const TYPE_TONES: Record<string, BadgeTone> = {
   REFERRAL_REWARD: "purple",
 };
 
-function pushTone(status: string): BadgeTone {
-  const value = status.toUpperCase();
-  if (["SENT", "DELIVERED", "SUCCESS"].includes(value)) return "green";
-  if (["FAILED", "ERROR"].includes(value)) return "red";
-  if (["PENDING", "QUEUED"].includes(value)) return "yellow";
-  return "gray";
+/**
+ * The API sends "ok" (Expo confirmed delivery), "sent" (handed to Expo, no receipt yet),
+ * "not_sent", "error", or an Expo error code such as "DeviceNotRegistered".
+ */
+function pushBadge(status: string): { tone: BadgeTone; label: string } {
+  const value = status.toLowerCase();
+  if (value === "ok") return { tone: "green", label: "Delivered" };
+  if (value === "sent") return { tone: "blue", label: "Sent" };
+  if (value === "not_sent") return { tone: "gray", label: "Not sent" };
+  if (value === "error") return { tone: "red", label: "Failed" };
+  return { tone: "red", label: humanize(status) };
 }
 
 export function NotificationsTab({ userId }: { userId: string }) {
@@ -74,8 +79,8 @@ export function NotificationsTab({ userId }: { userId: string }) {
                 {formatDateTime12(n.createdAt, "N/A")}
               </td>
               <td className={TD}>
-                {n.readAt ? (
-                  <span title={formatDateTime12(n.readAt)}>
+                {n.isRead || n.readAt ? (
+                  <span title={n.readAt ? formatDateTime12(n.readAt) : undefined}>
                     <Pill tone="green">Read</Pill>
                   </span>
                 ) : (
@@ -84,7 +89,7 @@ export function NotificationsTab({ userId }: { userId: string }) {
               </td>
               <td className={`${TD} hidden sm:table-cell`}>
                 {n.pushStatus ? (
-                  <Pill tone={pushTone(n.pushStatus)}>{humanize(n.pushStatus)}</Pill>
+                  <Pill tone={pushBadge(n.pushStatus).tone}>{pushBadge(n.pushStatus).label}</Pill>
                 ) : (
                   <span className="text-muted-foreground">N/A</span>
                 )}

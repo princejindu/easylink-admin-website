@@ -286,12 +286,12 @@ export default function UserDetailPage() {
           icon={ShoppingBag}
         />
         <StatsCard
-          title="Referral Balance"
+          title="Wallet balance"
           value={formatCurrency(user.referralBalance ?? 0)}
           icon={Gift}
         />
         <StatsCard
-          title="Referrals Made"
+          title="People referred"
           value={user.referralCount ?? 0}
           icon={Users}
         />

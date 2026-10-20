@@ -26,7 +26,7 @@ import { TopupsCard } from "@/components/purchases/topups-card";
 import { isDisputed } from "@/lib/utils/dispute.util";
 import { purchasesApi } from "@/lib/api/purchases.api";
 import { showSuccess, showError } from "@/lib/utils/toast.util";
-import { formatDateTime, formatCurrency } from "@/lib/utils/format.util";
+import { formatDateTime, formatDateTime12, formatCurrency } from "@/lib/utils/format.util";
 import { ROUTES } from "@/constants/routes.constants";
 import type { PurchaseDetail, CancelPurchaseResponse } from "@/types/purchase.types";
 
@@ -251,6 +251,11 @@ export default function PurchaseDetailPage() {
             <Row label="Provider">
               <span className="capitalize">{purchase.provider}</span>
             </Row>
+            {purchase.orderReference && (
+              <Row label="Order reference">
+                <span className="font-mono text-xs">{purchase.orderReference}</span>
+              </Row>
+            )}
             <Row label="Provider Order ID">
               <span className="font-mono text-xs">{purchase.providerOrderId || "N/A"}</span>
             </Row>
@@ -294,6 +299,9 @@ export default function PurchaseDetailPage() {
               <Row label="Paid with">
                 <PaymentMethodBadge method={purchase.paymentMethod} />
               </Row>
+            )}
+            {purchase.paidAt && (
+              <Row label="Paid at">{formatDateTime12(purchase.paidAt)}</Row>
             )}
             <Row label="Stripe Payment Intent">
               <span className="font-mono text-xs">

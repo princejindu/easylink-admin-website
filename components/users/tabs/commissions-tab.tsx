@@ -11,7 +11,7 @@ import { TabShell, TH, TD, PurchaseLink, UserLink } from "@/components/users/tab
 import { DueDate } from "@/components/users/tabs/due-date";
 import { useUserPage } from "@/components/users/tabs/use-user-page";
 import { usersApi } from "@/lib/api/users.api";
-import { formatMoney, humanize } from "@/lib/utils/format.util";
+import { formatDateTime12, formatMoney, humanize } from "@/lib/utils/format.util";
 
 function formatRate(rate?: number | null): string {
   if (rate === null || rate === undefined) return "N/A";
@@ -58,7 +58,7 @@ export function CommissionsTab({ userId }: { userId: string }) {
                 <PurchaseLink id={c.purchase?.id} label={c.purchase?.packageName} />
                 {c.purchase && (
                   <div className="text-xs text-muted-foreground">
-                    {formatMoney(c.purchase.price)}
+                    {formatMoney(c.purchase.price, c.currency)}
                     {c.purchase.isTopup ? ", top up" : ""}
                   </div>
                 )}
@@ -67,7 +67,13 @@ export function CommissionsTab({ userId }: { userId: string }) {
                 <PaymentMethodBadge method={c.purchase?.paymentMethod} />
               </td>
               <td className={`${TD} text-right font-semibold tabular-nums whitespace-nowrap`}>
-                {formatMoney(c.amount)}
+                {formatMoney(c.amount, c.currency)}
+                {typeof c.reversedAmount === "number" && c.reversedAmount !== 0 && (
+                  <div className="text-xs font-normal text-red-600 dark:text-red-400">
+                    Reversed {formatMoney(Math.abs(c.reversedAmount), c.currency)}
+                    {c.reversedAt ? ` on ${formatDateTime12(c.reversedAt)}` : ""}
+                  </div>
+                )}
               </td>
               <td className={`${TD} text-right tabular-nums hidden sm:table-cell`}>
                 {formatRate(c.rate)}
@@ -83,6 +89,7 @@ export function CommissionsTab({ userId }: { userId: string }) {
                   status={c.status}
                   availableAt={c.availableAt}
                   daysUntilAvailable={c.daysUntilAvailable}
+                  releasedAt={c.paidAt}
                 />
               </td>
             </tr>

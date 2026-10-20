@@ -79,6 +79,11 @@ export function UserWalletCard({ wallet, referredBy, onViewActivity, onOpenDrawe
             <Stat label="Lifetime earned" value={formatMoney(wallet.lifetimeEarned, currency)} />
             <Stat label="Lifetime spent" value={formatMoney(wallet.lifetimeSpent, currency)} />
           </dl>
+          {typeof wallet.lifetimeAdjusted === "number" && wallet.lifetimeAdjusted !== 0 && (
+            <p className="text-sm text-muted-foreground">
+              Manual adjustments: {formatMoney(wallet.lifetimeAdjusted, currency)}
+            </p>
+          )}
           <NextRelease wallet={wallet} />
         </>
       ) : (

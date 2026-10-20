@@ -107,6 +107,7 @@ export interface PurchaseTopup {
   status?: string | null;
   paymentMethod?: PaymentMethod | string | null;
   purchasedAt?: string | null;
+  orderReference?: string | null;
   validity?: Partial<PurchaseValidity> | null;
 }
 
@@ -116,6 +117,7 @@ export interface PurchaseExtras {
   isTopup?: boolean;
   topupOf?: PurchaseRef | null;
   validityState?: ValidityState | string | null;
+  orderReference?: string | null;
 }
 
 export interface PurchaseDetailExtras extends PurchaseExtras {

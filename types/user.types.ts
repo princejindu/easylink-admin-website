@@ -70,6 +70,7 @@ export interface UserWallet {
   currency?: string | null;
   lifetimeEarned?: number | null;
   lifetimeSpent?: number | null;
+  lifetimeAdjusted?: number | null;
   nextReleaseAt?: string | null;
   nextReleaseAmount?: number | null;
 }
@@ -112,6 +113,7 @@ export interface UserNotification {
   type?: string | null;
   title?: string | null;
   body?: string | null;
+  isRead?: boolean | null;
   readAt?: string | null;
   pushStatus?: string | null;
   pushError?: string | null;
@@ -158,6 +160,10 @@ export interface UserReferredFriend {
 export interface UserCommission {
   id: string;
   amount?: number | null;
+  currency?: string | null;
+  paidAt?: string | null;
+  reversedAt?: string | null;
+  reversedAmount?: number | null;
   rate?: number | null;
   status?: string | null;
   createdAt?: string | null;

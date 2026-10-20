@@ -21,6 +21,14 @@ import { usersApi } from "@/lib/api/users.api";
 import { formatDateTime12, formatMoney, humanize } from "@/lib/utils/format.util";
 import { cn } from "@/lib/utils/cn";
 
+const TYPE_LABELS: Record<string, string> = {
+  CREDIT_COMMISSION: "Commission",
+  REVERSAL: "Reversal",
+  DEBIT_PURCHASE: "Wallet purchase",
+  REFUND_PURCHASE: "Wallet refund",
+  ADJUSTMENT: "Adjustment",
+};
+
 export function WalletActivityTab({ userId }: { userId: string }) {
   const [status, setStatus] = useState("");
   const { items, total, page, setPage, isLoading, failed } = useUserPage(
@@ -71,7 +79,7 @@ export function WalletActivityTab({ userId }: { userId: string }) {
           return (
             <tr key={tx.id} className="border-b last:border-0">
               <td className={TD}>
-                <div className="font-medium">{humanize(tx.type)}</div>
+                <div className="font-medium">{TYPE_LABELS[(tx.type ?? "").toUpperCase()] ?? humanize(tx.type)}</div>
                 {tx.note && <div className="text-xs text-muted-foreground">{tx.note}</div>}
               </td>
               <td className={TD}>

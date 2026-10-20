@@ -99,6 +99,11 @@ export function daysUntil(date: string | null | undefined): number | null {
 /** "REFERRAL_REWARD" becomes "Referral reward". */
 export function humanize(value: string | null | undefined, fallback = "Unknown"): string {
   if (!value) return fallback;
-  const words = value.toLowerCase().split("_").join(" ").trim();
+  const words = value
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .toLowerCase()
+    .split("_")
+    .join(" ")
+    .trim();
   return words ? words.charAt(0).toUpperCase() + words.slice(1) : fallback;
 }

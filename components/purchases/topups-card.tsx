@@ -46,7 +46,12 @@ export function TopupsCard({ topups }: { topups: PurchaseTopup[] }) {
                   }}
                   className="border-b last:border-0 hover:bg-accent/50 focus-visible:outline-none focus-visible:bg-accent/50 transition-colors cursor-pointer"
                 >
-                  <td className="px-4 py-3 font-medium text-primary">{topup.packageName || "Top up"}</td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-primary">{topup.packageName || "Top up"}</div>
+                    {topup.orderReference && (
+                      <div className="text-xs text-muted-foreground font-mono">{topup.orderReference}</div>
+                    )}
+                  </td>
                   <td className="px-4 py-3">{topup.dataLabel || "N/A"}</td>
                   <td className="px-4 py-3 hidden sm:table-cell">{topup.durationDays ?? "N/A"}</td>
                   <td className="px-4 py-3 whitespace-nowrap">{formatMoney(topup.price, topup.currency)}</td>
