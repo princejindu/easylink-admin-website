@@ -311,6 +311,20 @@ export default function PurchaseDetailPage() {
                 {purchase.stripeChargeId ?? "N/A"}
               </span>
             </Row>
+            <Row label="Stripe receipt link">
+              {purchase.stripeReceiptUrl ? (
+                <a
+                  href={purchase.stripeReceiptUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Open
+                </a>
+              ) : (
+                "N/A"
+              )}
+            </Row>
           </div>
         </div>
 

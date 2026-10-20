@@ -27,6 +27,7 @@ export interface PurchaseDispute {
 export interface PurchaseDetail extends Purchase, PurchaseDetailExtras {
   stripePaymentIntentId?: string;
   stripeChargeId?: string;
+  stripeReceiptUrl?: string | null;
   iccid?: string;
   activationCode?: string;
   qrCodeData?: string;
