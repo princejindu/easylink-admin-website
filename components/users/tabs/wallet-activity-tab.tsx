@@ -107,7 +107,8 @@ export function WalletActivityTab({ userId }: { userId: string }) {
                 />
               </td>
               <td className={`${TD} hidden md:table-cell`}>
-                <UserLink user={tx.sourceUser} />
+                {/* A wallet purchase points back at this user; only a friend counts here. */}
+                <UserLink user={tx.sourceUser?.id === userId ? undefined : tx.sourceUser} />
               </td>
               <td className={`${TD} hidden md:table-cell`}>
                 <PurchaseLink id={tx.purchase?.id} label={tx.purchase?.packageName} />

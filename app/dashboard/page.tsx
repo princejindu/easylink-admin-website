@@ -84,7 +84,7 @@ export default function DashboardPage() {
             <div className="space-y-3">
               {topPackages.map((pkg, index) => (
                 <div
-                  key={pkg.packageId}
+                  key={`${pkg.packageId}:${pkg.packageName}`}
                   className="flex items-center justify-between py-2 border-b last:border-0"
                 >
                   <div className="flex items-center gap-3">
