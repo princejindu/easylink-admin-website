@@ -1,4 +1,4 @@
-export interface Purchase {
+export interface Purchase extends PurchaseExtras {
   id: string;
   userId: string;
   userEmail: string;
@@ -24,7 +24,7 @@ export interface PurchaseDispute {
   evidenceDueBy?: string | null;
 }
 
-export interface PurchaseDetail extends Purchase {
+export interface PurchaseDetail extends Purchase, PurchaseDetailExtras {
   stripePaymentIntentId?: string;
   stripeChargeId?: string;
   iccid?: string;
@@ -57,6 +57,8 @@ export interface PurchasesListParams {
   provider?: string;
   startDate?: string;
   endDate?: string;
+  paymentMethod?: PaymentMethod;
+  kind?: PurchaseKind;
 }
 
 export interface SyncPurchaseResponse {
@@ -73,4 +75,50 @@ export interface CancelPurchaseResponse {
   refundAmount: number;
   currency: string;
   message: string;
+}
+
+export type PaymentMethod = "CARD" | "WALLET";
+export type PurchaseKind = "ESIM" | "TOPUP";
+export type ValidityState = "NOT_STARTED" | "ACTIVE" | "EXPIRED";
+
+export interface PurchaseRef {
+  id: string;
+  packageName: string;
+}
+
+export interface PurchaseValidity {
+  state: ValidityState | null;
+  label: string | null;
+  startBy: string | null;
+  activatedAt: string | null;
+  expiresAt: string | null;
+  dataUsedBytes: number | null;
+  dataTotalBytes: number | null;
+  startRemindersSent: number[];
+}
+
+export interface PurchaseTopup {
+  id: string;
+  packageName: string;
+  dataLabel?: string | null;
+  durationDays?: number | null;
+  price?: number | null;
+  currency?: string | null;
+  status?: string | null;
+  paymentMethod?: PaymentMethod | string | null;
+  purchasedAt?: string | null;
+  validity?: Partial<PurchaseValidity> | null;
+}
+
+/** Fields added for wallet payments, top ups and validity. Optional so older API builds still work. */
+export interface PurchaseExtras {
+  paymentMethod?: PaymentMethod | string | null;
+  isTopup?: boolean;
+  topupOf?: PurchaseRef | null;
+  validityState?: ValidityState | string | null;
+}
+
+export interface PurchaseDetailExtras extends PurchaseExtras {
+  validity?: Partial<PurchaseValidity> | null;
+  topups?: PurchaseTopup[] | null;
 }

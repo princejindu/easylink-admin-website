@@ -69,3 +69,8 @@ export interface PageParams {
   page?: number;
   limit?: number;
 }
+
+export interface ReleaseDueResponse {
+  released: number;
+  amount: number;
+}

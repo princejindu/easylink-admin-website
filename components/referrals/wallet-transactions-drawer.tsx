@@ -16,8 +16,15 @@ import type { ReferralWallet, WalletTransaction } from "@/types/referrals.types"
 const PAGE_SIZE = 20;
 const DEBIT_HINTS = ["DEBIT", "SPEND", "PURCHASE", "WITHDRAW", "REVERSAL"];
 
+/** Totals are optional so the drawer can open from the user page, which only has balances. */
+export type DrawerWallet = Pick<
+  ReferralWallet,
+  "userId" | "name" | "email" | "availableBalance" | "pendingBalance"
+> &
+  Partial<Pick<ReferralWallet, "totalEarned" | "totalSpent">>;
+
 interface WalletTransactionsDrawerProps {
-  wallet: ReferralWallet;
+  wallet: DrawerWallet;
   onClose: () => void;
 }
 
@@ -113,11 +120,13 @@ export function WalletTransactionsDrawer({ wallet, onClose }: WalletTransactions
             { label: "Pending", value: wallet.pendingBalance },
             { label: "Total earned", value: wallet.totalEarned },
             { label: "Total spent", value: wallet.totalSpent },
-          ].map((stat) => (
+          ]
+            .filter((stat) => typeof stat.value === "number")
+            .map((stat) => (
             <div key={stat.label} className="p-4 border-r border-b sm:border-b-0 last:border-r-0">
               <dt className="text-xs text-muted-foreground">{stat.label}</dt>
               <dd className={cn("tabular-nums", stat.strong ? "text-xl font-semibold" : "text-base font-medium")}>
-                {formatCurrency(stat.value)}
+                {formatCurrency(stat.value as number)}
               </dd>
             </div>
           ))}

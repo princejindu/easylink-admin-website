@@ -6,6 +6,7 @@ import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { Pagination } from "@/components/shared/pagination";
 import { WalletTable } from "@/components/referrals/wallet-table";
 import { WalletTransactionsDrawer } from "@/components/referrals/wallet-transactions-drawer";
+import { ReleaseDueButton } from "@/components/referrals/release-due-button";
 import { referralsApi } from "@/lib/api/referrals.api";
 import { showError } from "@/lib/utils/toast.util";
 import { getErrorMessage } from "@/lib/utils/error.util";
@@ -57,7 +58,8 @@ export function WalletsSection() {
 
   return (
     <div className="space-y-3">
-      <div className="space-y-1">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="space-y-1 flex-1 min-w-[16rem]">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -72,6 +74,8 @@ export function WalletsSection() {
         <p className="text-xs text-muted-foreground">
           Search filters the current page only.
         </p>
+      </div>
+        <ReleaseDueButton onReleased={fetchWallets} />
       </div>
 
       {isLoading ? (

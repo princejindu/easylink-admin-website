@@ -8,6 +8,7 @@ import type {
   PageParams,
   PaginatedList,
   ReferralWallet,
+  ReleaseDueResponse,
   WalletTransaction,
 } from "@/types/referrals.types";
 
@@ -71,4 +72,7 @@ export const referralsApi = {
         params as Record<string, unknown>
       )
     ),
+
+  releaseDue: (): Promise<ReleaseDueResponse> =>
+    apiClient.post<ReleaseDueResponse>(API_ENDPOINTS.REFERRALS.RELEASE_DUE),
 };

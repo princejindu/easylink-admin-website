@@ -7,7 +7,55 @@ import type {
   UsersListParams,
   SuspendUserResponse,
   ActivateUserResponse,
+  PagedItems,
+  UserPageParams,
+  UserNotification,
+  UserWalletTransaction,
+  UserReferredFriend,
+  UserCommission,
+  UserPurchaseRow,
 } from "@/types/user.types";
+import type { Purchase, PurchasesListResponse } from "@/types/purchase.types";
+
+type RawPage<T> = {
+  items?: T[];
+  data?: T[];
+  total?: number;
+  meta?: { total?: number };
+} | null;
+
+/** Accepts { items, total } or { data, meta: { total } } so either API shape works. */
+function toPagedItems<T>(response: RawPage<T> | T[]): PagedItems<T> {
+  if (Array.isArray(response)) return { items: response, total: response.length };
+  const items = response?.items ?? response?.data ?? [];
+  const list = Array.isArray(items) ? items : [];
+  return {
+    items: list,
+    total: Number(response?.total ?? response?.meta?.total ?? list.length),
+  };
+}
+
+async function getPage<T>(endpoint: string, params: UserPageParams): Promise<PagedItems<T>> {
+  const query: Record<string, unknown> = { page: params.page, limit: params.limit };
+  if (params.status) query.status = params.status;
+  if (params.type) query.type = params.type;
+  return toPagedItems(await apiClient.get<RawPage<T> | T[]>(endpoint, query));
+}
+
+function purchaseToRow(p: Purchase): UserPurchaseRow {
+  return {
+    id: p.id,
+    packageName: p.packageName,
+    price: p.amount,
+    currency: p.currency,
+    status: p.status,
+    paymentMethod: p.paymentMethod ?? null,
+    isTopup: p.isTopup ?? null,
+    topupOf: p.topupOf ?? null,
+    validityState: p.validityState ?? null,
+    purchasedAt: p.createdAt,
+  };
+}
 
 type ApiUsersListResponse = {
   data: Array<Partial<User> & { fullName?: string; phoneNumber?: string }>;
@@ -22,6 +70,8 @@ function normalizeUser(raw: Partial<User> & { fullName?: string; phoneNumber?: s
   const createdAt = raw.createdAt ?? new Date().toISOString();
 
   return {
+    // Keep every other field the API sends (wallet, time zone, recent purchases and so on).
+    ...raw,
     id: String(raw.id ?? ""),
     email: raw.email ?? "",
     fullName,
@@ -75,4 +125,32 @@ export const usersApi = {
 
   activate: (id: string): Promise<ActivateUserResponse> =>
     apiClient.patch<ActivateUserResponse>(API_ENDPOINTS.USERS.ACTIVATE(id)),
+
+  notifications: (id: string, params: UserPageParams) =>
+    getPage<UserNotification>(API_ENDPOINTS.USERS.NOTIFICATIONS(id), params),
+
+  walletTransactions: (id: string, params: UserPageParams) =>
+    getPage<UserWalletTransaction>(API_ENDPOINTS.USERS.WALLET_TRANSACTIONS(id), params),
+
+  referrals: (id: string, params: UserPageParams) =>
+    getPage<UserReferredFriend>(API_ENDPOINTS.USERS.REFERRALS(id), params),
+
+  commissions: (id: string, params: UserPageParams) =>
+    getPage<UserCommission>(API_ENDPOINTS.USERS.COMMISSIONS(id), params),
+
+  /** Uses the per user endpoint, or the purchase list filtered by user on API builds without it. */
+  purchases: async (id: string, params: UserPageParams): Promise<PagedItems<UserPurchaseRow>> => {
+    try {
+      return await getPage<UserPurchaseRow>(API_ENDPOINTS.USERS.PURCHASES(id), params);
+    } catch (err: unknown) {
+      if ((err as { statusCode?: number })?.statusCode !== 404) throw err;
+      const response = await apiClient.get<PurchasesListResponse>(API_ENDPOINTS.PURCHASES.LIST, {
+        userId: id,
+        page: params.page,
+        limit: params.limit,
+      });
+      const list = response?.data ?? [];
+      return { items: list.map(purchaseToRow), total: response?.meta?.total ?? list.length };
+    }
+  },
 };

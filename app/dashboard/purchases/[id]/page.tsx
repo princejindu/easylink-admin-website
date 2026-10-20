@@ -9,12 +9,20 @@ import {
   AlertCircle,
   User,
   Package,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { DisputedBadge } from "@/components/purchases/disputed-badge";
 import { DisputeEvidenceCard } from "@/components/purchases/dispute-evidence-card";
+import {
+  PaymentMethodBadge,
+  PurchaseKindBadge,
+} from "@/components/purchases/purchase-badges";
+import { ValidityCard } from "@/components/purchases/validity-card";
+import { TopupsCard } from "@/components/purchases/topups-card";
 import { isDisputed } from "@/lib/utils/dispute.util";
 import { purchasesApi } from "@/lib/api/purchases.api";
 import { showSuccess, showError } from "@/lib/utils/toast.util";
@@ -36,6 +44,7 @@ export default function PurchaseDetailPage() {
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelResult, setCancelResult] = useState<CancelPurchaseResponse | null>(null);
   const [cancelPartialError, setCancelPartialError] = useState(false);
+  const [showMetadata, setShowMetadata] = useState(false);
 
   const fetchPurchase = useCallback(async () => {
     setIsLoading(true);
@@ -197,7 +206,7 @@ export default function PurchaseDetailPage() {
           <strong>
             {formatCurrency(cancelResult.refundAmount, cancelResult.currency)}
           </strong>{" "}
-          issued (ref: {cancelResult.refundId}). May take 5–10 business days to
+          issued (ref: {cancelResult.refundId}). May take 5 to 10 business days to
           appear on the card.
         </div>
       )}
@@ -218,6 +227,21 @@ export default function PurchaseDetailPage() {
               </span>
             </Row>
             <Row label="Package">{purchase.packageName}</Row>
+            {purchase.isTopup !== undefined && purchase.isTopup !== null && (
+              <Row label="Type">
+                <PurchaseKindBadge isTopup={purchase.isTopup} />
+              </Row>
+            )}
+            {purchase.isTopup && purchase.topupOf?.id && (
+              <Row label="Top up of">
+                <button
+                  onClick={() => router.push(ROUTES.PURCHASE_DETAIL(purchase.topupOf!.id))}
+                  className="text-primary hover:underline"
+                >
+                  {purchase.topupOf.packageName || "Parent eSIM"}
+                </button>
+              </Row>
+            )}
             <Row label="Package ID">
               <span className="font-mono text-xs">{purchase.packageId}</span>
             </Row>
@@ -266,6 +290,11 @@ export default function PurchaseDetailPage() {
             Payment
           </div>
           <div className="space-y-3 text-sm">
+            {purchase.paymentMethod && (
+              <Row label="Paid with">
+                <PaymentMethodBadge method={purchase.paymentMethod} />
+              </Row>
+            )}
             <Row label="Stripe Payment Intent">
               <span className="font-mono text-xs">
                 {purchase.stripePaymentIntentId ?? "N/A"}
@@ -299,15 +328,34 @@ export default function PurchaseDetailPage() {
             {purchase.providerMetadata &&
               Object.keys(purchase.providerMetadata).length > 0 && (
                 <div>
-                  <span className="text-muted-foreground">Provider Metadata</span>
-                  <pre className="mt-1 p-2 rounded bg-muted text-xs overflow-x-auto">
-                    {JSON.stringify(purchase.providerMetadata, null, 2)}
-                  </pre>
+                  <button
+                    onClick={() => setShowMetadata((v) => !v)}
+                    aria-expanded={showMetadata}
+                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showMetadata ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
+                    {showMetadata ? "Hide provider metadata" : "Show provider metadata"}
+                  </button>
+                  {showMetadata && (
+                    <pre className="mt-1 p-2 rounded bg-muted text-xs overflow-x-auto">
+                      {JSON.stringify(purchase.providerMetadata, null, 2)}
+                    </pre>
+                  )}
                 </div>
               )}
           </div>
         </div>
       </div>
+
+      <ValidityCard validity={purchase.validity} />
+
+      {!purchase.isTopup && Array.isArray(purchase.topups) && (
+        <TopupsCard topups={purchase.topups} />
+      )}
 
       {/* QR code */}
       {purchase.qrCodeData && (
