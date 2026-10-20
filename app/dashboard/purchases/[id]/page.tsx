@@ -206,7 +206,7 @@ export default function PurchaseDetailPage() {
           <strong>
             {formatCurrency(cancelResult.refundAmount, cancelResult.currency)}
           </strong>{" "}
-          issued (ref: {cancelResult.refundId}). May take 5 to 10 business days to
+          issued (Stripe refund id: {cancelResult.refundId}). May take 5 to 10 business days to
           appear on the card.
         </div>
       )}
@@ -226,6 +226,9 @@ export default function PurchaseDetailPage() {
                 {isDisputed(purchase) && <DisputedBadge />}
               </span>
             </Row>
+            <Row label="Order number">
+              <span className="font-mono text-xs">{purchase.orderReference || "N/A"}</span>
+            </Row>
             <Row label="Package">{purchase.packageName}</Row>
             {purchase.isTopup !== undefined && purchase.isTopup !== null && (
               <Row label="Type">
@@ -242,7 +245,7 @@ export default function PurchaseDetailPage() {
                 </button>
               </Row>
             )}
-            <Row label="Package ID">
+            <Row label="Provider package id">
               <span className="font-mono text-xs">{purchase.packageId}</span>
             </Row>
             <Row label="Amount">
@@ -251,12 +254,7 @@ export default function PurchaseDetailPage() {
             <Row label="Provider">
               <span className="capitalize">{purchase.provider}</span>
             </Row>
-            {purchase.orderReference && (
-              <Row label="Order reference">
-                <span className="font-mono text-xs">{purchase.orderReference}</span>
-              </Row>
-            )}
-            <Row label="Provider Order ID">
+            <Row label={`${purchase.provider === "transatel" ? "Transatel" : "Telna"} order id`}>
               <span className="font-mono text-xs">{purchase.providerOrderId || "N/A"}</span>
             </Row>
             <Row label="Created">{formatDateTime(purchase.createdAt)}</Row>
@@ -303,12 +301,12 @@ export default function PurchaseDetailPage() {
             {purchase.paidAt && (
               <Row label="Paid at">{formatDateTime12(purchase.paidAt)}</Row>
             )}
-            <Row label="Stripe Payment Intent">
+            <Row label="Stripe payment id">
               <span className="font-mono text-xs">
                 {purchase.stripePaymentIntentId ?? "N/A"}
               </span>
             </Row>
-            <Row label="Stripe Charge">
+            <Row label="Stripe charge id">
               <span className="font-mono text-xs">
                 {purchase.stripeChargeId ?? "N/A"}
               </span>

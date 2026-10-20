@@ -18,7 +18,7 @@ function formatOptionalDate(value: string | null | undefined): string {
 
 export function DisputeEvidenceCard({ purchase, disputed }: DisputeEvidenceCardProps) {
   const fields = [
-    { label: "Order ID", value: purchase.id, mono: true },
+    { label: "Order number", value: purchase.orderReference || purchase.id, mono: true },
     { label: "Paid at", value: formatOptionalDate(purchase.paidAt) },
     { label: "ICCID", value: purchase.iccid || NOT_RECORDED, mono: true },
     { label: "Delivered at", value: formatOptionalDate(purchase.deliveredAt) },
