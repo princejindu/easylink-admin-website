@@ -17,9 +17,13 @@ import { PageHeader } from "@/components/shared/page-header";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { StatsCard } from "@/components/shared/stats-card";
+import { UserWalletCard } from "@/components/users/user-wallet-card";
+import { UserTimezoneCard } from "@/components/users/user-timezone-card";
+import { UserActivityTabs, type UserTabId } from "@/components/users/user-activity-tabs";
+import { WalletTransactionsDrawer } from "@/components/referrals/wallet-transactions-drawer";
 import { usersApi } from "@/lib/api/users.api";
 import { showSuccess, showError } from "@/lib/utils/toast.util";
-import { formatDate, formatDateTime, formatCurrency } from "@/lib/utils/format.util";
+import { formatDate, formatDateTime12, formatCurrency } from "@/lib/utils/format.util";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { AdminRole } from "@/enums/admin-role.enum";
 import { ROUTES } from "@/constants/routes.constants";
@@ -45,6 +49,9 @@ export default function UserDetailPage() {
   const [modal, setModal] = useState<ModalType>(null);
   const [suspendReason, setSuspendReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<UserTabId>("purchases");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
 
   const isSuperAdmin = admin?.role === AdminRole.SUPER_ADMIN;
 
@@ -70,11 +77,18 @@ export default function UserDetailPage() {
     fetchUser();
   }, [fetchUser]);
 
+  const trimmedReason = suspendReason.trim();
+
   const handleSuspend = async () => {
     if (!user) return;
+    if (!trimmedReason) {
+      showError("Enter a reason for the suspension.");
+      return;
+    }
     setIsSubmitting(true);
     try {
-      const result = await usersApi.suspend(user.id, suspendReason || undefined);
+      const result = await usersApi.suspend(user.id, trimmedReason);
+      if (!result) return;
       setUser((prev) =>
         prev
           ? {
@@ -101,6 +115,7 @@ export default function UserDetailPage() {
     setIsSubmitting(true);
     try {
       const result = await usersApi.activate(user.id);
+      if (!result) return;
       setUser((prev) =>
         prev
           ? {
@@ -229,16 +244,25 @@ export default function UserDetailPage() {
             <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
             <span>
               {user.lastLoginAt
-                ? `Last login ${formatDateTime(user.lastLoginAt)}`
+                ? `Last login ${formatDateTime12(user.lastLoginAt)}`
                 : "Never logged in"}
             </span>
           </div>
         </div>
 
+        {selfReferralBlockCount(user.selfReferralBlocks) !== null && (
+          <p className="text-sm text-muted-foreground">
+            Self referral attempts blocked:{" "}
+            <span className="font-medium text-foreground">
+              {selfReferralBlockCount(user.selfReferralBlocks)}
+            </span>
+          </p>
+        )}
+
         {user.status === "suspended" && user.suspendedAt && (
           <div className="mt-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-sm">
             <p className="font-medium text-red-700 dark:text-red-400">
-              Suspended on {formatDateTime(user.suspendedAt)}
+              Suspended on {formatDateTime12(user.suspendedAt)}
             </p>
             {user.suspendReason && (
               <p className="text-red-600 dark:text-red-300 mt-1">
@@ -262,80 +286,45 @@ export default function UserDetailPage() {
           icon={ShoppingBag}
         />
         <StatsCard
-          title="Referral Balance"
+          title="Wallet balance"
           value={formatCurrency(user.referralBalance ?? 0)}
           icon={Gift}
         />
         <StatsCard
-          title="Referrals Made"
+          title="People referred"
           value={user.referralCount ?? 0}
           icon={Users}
         />
       </div>
 
-      {/* Recent purchases */}
-      <div className="bg-card border rounded-lg overflow-hidden">
-        <div className="px-4 py-3 border-b bg-muted/50">
-          <h3 className="font-medium text-sm">Recent Purchases</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <UserWalletCard
+            wallet={user.wallet}
+            referredBy={user.referredBy}
+            onViewActivity={() => setActiveTab("wallet")}
+            onOpenDrawer={() => setIsDrawerOpen(true)}
+          />
         </div>
-
-        {!user.recentPurchases?.length ? (
-          <div className="p-8 text-center text-muted-foreground text-sm">
-            No purchases yet.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">
-                    Package
-                  </th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">
-                    Amount
-                  </th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">
-                    Provider
-                  </th>
-                  <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
-                    Date
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {user.recentPurchases.map((purchase) => (
-                  <tr
-                    key={purchase.id}
-                    onClick={() =>
-                      router.push(ROUTES.PURCHASE_DETAIL(purchase.id))
-                    }
-                    className="border-b last:border-0 hover:bg-accent/50 transition-colors cursor-pointer"
-                  >
-                    <td className="px-4 py-3 font-medium">
-                      {purchase.packageName}
-                    </td>
-                    <td className="px-4 py-3">
-                      {formatCurrency(purchase.amount)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={purchase.status} />
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground capitalize hidden md:table-cell">
-                      {purchase.provider}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
-                      {formatDateTime(purchase.createdAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <UserTimezoneCard user={user} />
       </div>
+
+      <UserActivityTabs userId={user.id} activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {isDrawerOpen && (
+        <WalletTransactionsDrawer
+          wallet={{
+            userId: user.id,
+            name: displayName,
+            email: user.email,
+            availableBalance: Number(user.wallet?.availableBalance ?? 0),
+            pendingBalance: Number(user.wallet?.pendingBalance ?? 0),
+            totalEarned: user.wallet?.lifetimeEarned ?? undefined,
+            totalSpent: user.wallet?.lifetimeSpent ?? undefined,
+          }}
+          onClose={closeDrawer}
+        />
+      )}
 
       {/* Suspend modal */}
       {modal === "suspend" && (
@@ -349,13 +338,15 @@ export default function UserDetailPage() {
             </p>
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="suspend-reason">
-                Reason (optional but recommended)
+                Reason (required)
               </label>
               <textarea
                 id="suspend-reason"
                 rows={3}
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
+                maxLength={500}
+                required
                 placeholder="e.g. Suspicious payment activity"
                 className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               />
@@ -373,7 +364,7 @@ export default function UserDetailPage() {
               </button>
               <button
                 onClick={handleSuspend}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !trimmedReason}
                 className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {isSubmitting && <LoadingSpinner size="sm" />}
@@ -416,4 +407,11 @@ export default function UserDetailPage() {
       )}
     </div>
   );
+}
+
+/** The API may send a count or a list. Null when it sends nothing usable. */
+function selfReferralBlockCount(value: unknown): number | null {
+  if (typeof value === "number") return value;
+  if (Array.isArray(value)) return value.length;
+  return null;
 }

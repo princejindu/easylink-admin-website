@@ -4,6 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { DisputedBadge } from "@/components/purchases/disputed-badge";
+import {
+  PaymentMethodBadge,
+  PurchaseKindBadge,
+  ValidityBadge,
+} from "@/components/purchases/purchase-badges";
+import { isDisputed } from "@/lib/utils/dispute.util";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { formatDateTime, formatCurrency } from "@/lib/utils/format.util";
 import { purchasesApi } from "@/lib/api/purchases.api";
@@ -69,6 +76,15 @@ export function PurchaseTable({ purchases, onRefresh }: PurchaseTableProps) {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">
                 Status
               </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
+                Type
+              </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">
+                Payment
+              </th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">
+                Validity
+              </th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">
                 Provider
               </th>
@@ -100,7 +116,32 @@ export function PurchaseTable({ purchases, onRefresh }: PurchaseTableProps) {
                   {formatCurrency(purchase.amount, purchase.currency)}
                 </td>
                 <td className="px-4 py-3">
-                  <StatusBadge status={purchase.status} />
+                  <div className="flex flex-wrap items-center gap-1">
+                    <StatusBadge status={purchase.status} />
+                    {isDisputed(purchase) && <DisputedBadge />}
+                  </div>
+                </td>
+                <td className="px-4 py-3 hidden lg:table-cell">
+                  <div className="flex flex-col items-start gap-1">
+                    <PurchaseKindBadge isTopup={purchase.isTopup} />
+                    {purchase.isTopup && purchase.topupOf?.id && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(ROUTES.PURCHASE_DETAIL(purchase.topupOf!.id));
+                        }}
+                        className="text-xs text-primary hover:underline text-left"
+                      >
+                        Of {purchase.topupOf.packageName || "parent eSIM"}
+                      </button>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 hidden md:table-cell">
+                  <PaymentMethodBadge method={purchase.paymentMethod} />
+                </td>
+                <td className="px-4 py-3 hidden lg:table-cell">
+                  <ValidityBadge state={purchase.validityState} />
                 </td>
                 <td className="px-4 py-3 text-muted-foreground capitalize hidden md:table-cell">
                   {purchase.provider}

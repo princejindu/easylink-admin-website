@@ -10,6 +10,11 @@ export const API_ENDPOINTS = {
     DETAIL: (id: string) => `${BASE}/users/${id}`,
     SUSPEND: (id: string) => `${BASE}/users/${id}/suspend`,
     ACTIVATE: (id: string) => `${BASE}/users/${id}/activate`,
+    NOTIFICATIONS: (id: string) => `${BASE}/users/${id}/notifications`,
+    WALLET_TRANSACTIONS: (id: string) => `${BASE}/users/${id}/wallet-transactions`,
+    REFERRALS: (id: string) => `${BASE}/users/${id}/referrals`,
+    COMMISSIONS: (id: string) => `${BASE}/users/${id}/commissions`,
+    PURCHASES: (id: string) => `${BASE}/users/${id}/purchases`,
   },
   ORDERS: {
     LIST: `${BASE}/purchases`,
@@ -30,8 +35,10 @@ export const API_ENDPOINTS = {
   REFERRALS: {
     COMMISSION_RATE: `${BASE}/referrals/commission-rate`,
     COMMISSIONS: `${BASE}/referrals/commissions`,
-    MARK_PAID: (id: string) =>
-      `${BASE}/referrals/commissions/${id}/mark-paid`,
+    WALLETS: `${BASE}/referrals/wallets`,
+    WALLET_TRANSACTIONS: (userId: string) =>
+      `${BASE}/referrals/wallets/${userId}/transactions`,
+    RELEASE_DUE: `${BASE}/referrals/release-due`,
   },
   CONFIG: {
     GET: `${BASE}/esim/pricing`,
